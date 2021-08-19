@@ -1,8 +1,14 @@
 <template>
-    <div>
-        <div class="post">
-            <div><strong>Название: </strong>Пост о JavaScript</div>
-            <div><strong>Описание: </strong>JavaScript универсальный язык программирования</div>
+    <div class="app">
+        <form>
+            <h4>Создание поста</h4>
+            <input class="input" type="text" placeholder="Название">
+            <input class="input" type="text" placeholder="Описание">
+            <button class="btn" type="submit">Создать</button>
+        </form>
+        <div class="post" v-for="post in posts">
+            <div><strong>Название: </strong>{{post.title}}</div>
+            <div><strong>Описание: </strong>{{post.body}}</div>
         </div>
     </div>
 </template>
@@ -11,18 +17,14 @@
 export default {
   data() {
     return {
-      likes: 0,
-      dislikes: 0
+      posts: [
+        { id: 1, title: "Javascript", body: "Описание поста JavaScript" },
+        { id: 2, title: "Java", body: "Описание поста Java" },
+        { id: 3, title: "Swift", body: "Описание поста Swift" }
+      ]
     };
   },
-  methods: {
-    addLike() {
-      this.likes += 1;
-    },
-    addDislike() {
-      this.dislikes += 1;
-    }
-  }
+  methods: {}
 };
 </script>
 
@@ -33,9 +35,34 @@ export default {
   box-sizing: border-box;
 }
 
+.app {
+  padding: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
 .post {
   padding: 15px;
   border: 2px solid teal;
   margin-top: 15px;
+}
+
+.input {
+  width: 100%;
+  border: 2px solid teal;
+  padding: 10px 15px;
+  margin-top: 15px;
+}
+
+.btn {
+  margin-top: 15px;
+  align-self: center;
+  padding: 10px 15px;
+  background: none;
+  color: teal;
+  border: 1px solid teal;
 }
 </style>
