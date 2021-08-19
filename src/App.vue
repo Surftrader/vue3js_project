@@ -1,12 +1,30 @@
 <template>
     <div class="app">
-        <form>
+        <form @submit.prevent>
             <h4>Создание поста</h4>
-            <input class="input" type="text" placeholder="Название">
-            <input class="input" type="text" placeholder="Описание">
-            <button class="btn" type="submit">Создать</button>
+            <input 
+                v-bind:value="title"
+                @input="title = $event.target.value"
+                class="input" 
+                type="text" 
+                placeholder="Название"
+                >
+            <input 
+                v-bind:value="body" 
+                @input="body = $event.target.value"
+                class="input" 
+                type="text" 
+                placeholder="Описание">
+            <button 
+                class="btn" 
+                @click="createPost"
+                >Создать
+            </button>
         </form>
-        <div class="post" v-for="post in posts">
+        <div 
+            class="post" 
+            v-for="post in posts" 
+            v-bind:key="post.id">
             <div><strong>Название: </strong>{{post.title}}</div>
             <div><strong>Описание: </strong>{{post.body}}</div>
         </div>
@@ -21,10 +39,23 @@ export default {
         { id: 1, title: "Javascript", body: "Описание поста JavaScript" },
         { id: 2, title: "Java", body: "Описание поста Java" },
         { id: 3, title: "Swift", body: "Описание поста Swift" }
-      ]
+      ],
+      title: "",
+      body: ""
     };
   },
-  methods: {}
+  methods: {
+    createPost() {
+      const newPost = {
+        id: Date.now(),
+        title: this.title,
+        body: this.body
+      };
+      this.posts.push(newPost);
+      this.title = "";
+      this.body = "";
+    }
+  }
 };
 </script>
 
