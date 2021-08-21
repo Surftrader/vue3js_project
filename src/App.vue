@@ -22,6 +22,8 @@
 <script>
 import PostForm from "@/components/PostForm";
 import PostList from "@/components/PostList";
+import axios from "axios";
+
 export default {
   // регистрация компонентов
   components: {
@@ -30,11 +32,7 @@ export default {
   },
   data() {
     return {
-      posts: [
-        { id: 1, title: "Javascript", body: "Описание поста JavaScript" },
-        { id: 2, title: "Java", body: "Описание поста Java" },
-        { id: 3, title: "Swift", body: "Описание поста Swift" }
-      ],
+      posts: [],
       dialogVisible: false
     };
   },
@@ -48,6 +46,15 @@ export default {
     },
     showDialog() {
       this.dialogVisible = true;
+    },
+    async fetchPosts() {
+      try {
+        const link = "https://jsonplaceholder.typicode.com/posts?_limit=10";
+        const response = await axios.get(link);
+        this.posts = response.data;
+      } catch (e) {
+        alert("Ошибка");
+      }
     }
   }
 };
