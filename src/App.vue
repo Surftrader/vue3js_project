@@ -7,7 +7,7 @@
       >
       Создать пост
       </my-button>
-      <my-dialog v-model:show="dialogVisible">
+      <my-dialog v-model="dialogVisible">
         <post-form 
         @create="createPost" 
       />
