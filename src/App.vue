@@ -12,7 +12,7 @@
           :options="sortOptions"
         />
       </div>      
-      <my-dialog v-model="dialogVisible">
+      <my-dialog v-model:show="dialogVisible">
         <post-form 
         @create="createPost" 
       />
