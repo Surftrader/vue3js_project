@@ -77,6 +77,14 @@ export default {
   },
   mounted() {
     this.fetchPosts();
+  },
+  watch: {
+    // такое же название, как и модель которая объявлена в компоненте
+    selectedSort(newValue) {
+      this.posts.sort((post1, post2) => {
+        return post1[newValue].localeCompare(post2[newValue]);
+      });
+    }
   }
 };
 </script>
