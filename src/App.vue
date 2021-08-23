@@ -27,6 +27,18 @@
         v-if="!isPostsLoading"      
       />
       <div v-else>Идет загрузка...</div>
+      <div class="page__wrapper">
+        <div
+          class="page" 
+          :class="{
+            'current-page': page === pageNumber
+          }"
+          @click="changePage(pageNumber)"
+          v-for="pageNumber in totalPages" 
+          :key="pageNumber"
+          >{{pageNumber}}
+        </div>
+      </div>
     </div>
 </template>
 
@@ -48,6 +60,9 @@ export default {
       isPostsLoading: false,
       selectedSort: "",
       searchQuery: "",
+      page: 1,
+      limit: 10,
+      totalPages: 0,
       sortOptions: [
         { value: "title", name: "По названию" },
         { value: "body", name: "По содержанию" }
@@ -69,8 +84,16 @@ export default {
       try {
         this.isPostsLoading = true;
         setTimeout(async () => {
-          const link = "https://jsonplaceholder.typicode.com/posts?_limit=10";
-          const response = await axios.get(link);
+          const link = "https://jsonplaceholder.typicode.com/posts?";
+          const response = await axios.get(link, {
+            params: {
+              _page: this.page,
+              _limit: this.limit
+            }
+          });
+          this.totalPages = Math.ceil(
+            response.headers["x-total-count"] / this.limit
+          );
           this.posts = response.data;
         }, 1000);
       } catch (e) {
@@ -78,6 +101,10 @@ export default {
       } finally {
         this.isPostsLoading = false;
       }
+    },
+    changePage(pageNumber) {
+      this.page = pageNumber;
+      // this.fetchPosts();
     }
   },
   mounted() {
@@ -100,6 +127,11 @@ export default {
     // selectedSort(newValue) {
     //   this.posts.sort();
     // }
+
+    // функция, которая отрабатывает на смену страницы
+    page() {
+      this.fetchPosts();
+    }
   }
 };
 </script>
@@ -117,5 +149,16 @@ export default {
   margin: 15px 0;
   display: flex;
   justify-content: space-between;
+}
+.page__wrapper {
+  display: flex;
+  margin-top: 15px;
+}
+.page {
+  border: 1px solid black;
+  padding: 10px;
+}
+.current-page {
+  border: 2px solid teal;
 }
 </style>
