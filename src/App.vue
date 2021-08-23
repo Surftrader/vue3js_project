@@ -27,7 +27,8 @@
         v-if="!isPostsLoading"      
       />
       <div v-else>Идет загрузка...</div>
-      <div class="page__wrapper">
+      <div ref="observer" class="observer"></div>
+      <!-- <div class="page__wrapper">
         <div
           class="page" 
           :class="{
@@ -38,7 +39,7 @@
           :key="pageNumber"
           >{{pageNumber}}
         </div>
-      </div>
+      </div> -->
     </div>
 </template>
 
@@ -94,6 +95,7 @@ export default {
           this.totalPages = Math.ceil(
             response.headers["x-total-count"] / this.limit
           );
+          // перезаписываем посты
           this.posts = response.data;
         }, 1000);
       } catch (e) {
@@ -102,13 +104,46 @@ export default {
         this.isPostsLoading = false;
       }
     },
-    changePage(pageNumber) {
-      this.page = pageNumber;
-      // this.fetchPosts();
+    async loadMorePosts() {
+      try {
+        this.page += 1;
+        setTimeout(async () => {
+          const link = "https://jsonplaceholder.typicode.com/posts?";
+          const response = await axios.get(link, {
+            params: {
+              _page: this.page,
+              _limit: this.limit
+            }
+          });
+          this.totalPages = Math.ceil(
+            response.headers["x-total-count"] / this.limit
+          );
+          // добавляем посты в конец массива
+          this.posts = [...this.posts, ...response.data];
+        }, 1000);
+      } catch (e) {
+        alert("Ошибка");
+      }
     }
+    // changePage(pageNumber) {
+    //   this.page = pageNumber;
+    //   // this.fetchPosts();
+    // }
   },
   mounted() {
     this.fetchPosts();
+    const options = {
+      // root: document.querySelector("#scrollArea"),
+      rootMargin: "0px",
+      threshold: 1.0
+    };
+    const callback = (entries, observer) => {
+      if (entries[0].isIntersecting && this.page < this.totalPages) {
+        this.loadMorePosts();
+      }
+    };
+    const observer = new IntersectionObserver(callback, options);
+    observer.observe(this.$refs.observer);
   },
   computed: {
     sortedPosts() {
@@ -127,11 +162,10 @@ export default {
     // selectedSort(newValue) {
     //   this.posts.sort();
     // }
-
     // функция, которая отрабатывает на смену страницы
-    page() {
-      this.fetchPosts();
-    }
+    // page() {
+    //   this.fetchPosts();
+    // }
   }
 };
 </script>
@@ -160,5 +194,9 @@ export default {
 }
 .current-page {
   border: 2px solid teal;
+}
+.observer {
+  height: 30px;
+  background: green;
 }
 </style>
