@@ -1,23 +1,21 @@
 <template>
     <div>
-      <h1>{{$store.state.post.limit}}</h1>
-      {{$store.commit('page/setLoading')}}
-      <!-- <h1>Страница с постами</h1>
-      <my-input
+      <h1>Страница с постами</h1>
+      <!-- <my-input
         v-model="searchQuery"
         placeholder="Поиск..."
         v-focus
-      />
+      /> -->
       <div class="app__btns">
         <my-button
         @click="showDialog"
         >
         Создать пост
         </my-button>
-        <my-select 
+        <!-- <my-select 
           v-model="selectedSort"
           :options="sortOptions"
-        />
+        /> -->
       </div>      
       <my-dialog v-model:show="dialogVisible">
         <post-form 
@@ -30,7 +28,7 @@
         v-if="!isPostsLoading"      
       />
       <div v-else>Идет загрузка...</div>
-      <div v-intersection="loadMorePosts" class="observer"></div> -->
+      <div v-intersection="loadMorePosts" class="observer"></div>
       <!-- <div class="page__wrapper">
         <div
           class="page" 
@@ -53,6 +51,7 @@ import MyButton from "@/components/UI/MyButton";
 import axios from "axios";
 import MySelect from "@/components/UI/MySelect";
 import MyInput from "@/components/UI/MyInput";
+import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
 
 export default {
   //   // регистрация компонентов
@@ -65,21 +64,17 @@ export default {
   },
   data() {
     return {
-      posts: [],
-      dialogVisible: false,
-      isPostsLoading: false,
-      selectedSort: "",
-      searchQuery: "",
-      page: 1,
-      limit: 10,
-      totalPages: 0,
-      sortOptions: [
-        { value: "title", name: "По названию" },
-        { value: "body", name: "По содержанию" }
-      ]
+      dialogVisible: false
     };
   },
   methods: {
+    ...mapMutations({
+      setPage: "post/setPage"
+    }),
+    ...mapActions({
+      loadMorePosts: "post/loadMorePosts",
+      fetchPosts: "post/fetchPosts"
+    }),
     createPost(post) {
       this.posts.push(post);
       this.dialogVisible = false;
@@ -90,92 +85,27 @@ export default {
     showDialog() {
       this.dialogVisible = true;
     }
-    // async fetchPosts() {
-    //   try {
-    //     this.isPostsLoading = true;
-    //     setTimeout(async () => {
-    //       const link = "https://jsonplaceholder.typicode.com/posts?";
-    //       const response = await axios.get(link, {
-    //         params: {
-    //           _page: this.page,
-    //           _limit: this.limit
-    //         }
-    //       });
-    //       this.totalPages = Math.ceil(
-    //         response.headers["x-total-count"] / this.limit
-    //       );
-    //       // перезаписываем посты
-    //       this.posts = response.data;
-    //     }, 1000);
-    //   } catch (e) {
-    //     alert("Ошибка");
-    //   } finally {
-    //     this.isPostsLoading = false;
-    //   }
-    // },
-    // async loadMorePosts() {
-    //   try {
-    //     this.page += 1;
-    //     setTimeout(async () => {
-    //       const link = "https://jsonplaceholder.typicode.com/posts?";
-    //       const response = await axios.get(link, {
-    //         params: {
-    //           _page: this.page,
-    //           _limit: this.limit
-    //         }
-    //       });
-    //       this.totalPages = Math.ceil(
-    //         response.headers["x-total-count"] / this.limit
-    //       );
-    //       // добавляем посты в конец массива
-    //       this.posts = [...this.posts, ...response.data];
-    //     }, 1000);
-    //   } catch (e) {
-    //     alert("Ошибка");
-    //   }
-    // }
-    // changePage(pageNumber) {
-    //   this.page = pageNumber;
-    //   // this.fetchPosts();
-    // }
   },
   mounted() {
-    // this.fetchPosts();
-    // const options = {
-    //   // root: document.querySelector("#scrollArea"),
-    //   rootMargin: "0px",
-    //   threshold: 1.0
-    // };
-    // const callback = (entries, observer) => {
-    //   if (entries[0].isIntersecting && this.page < this.totalPages) {
-    //     this.loadMorePosts();
-    //   }
-    // };
-    // const observer = new IntersectionObserver(callback, options);
-    // observer.observe(this.$refs.observer);
+    this.fetchPosts();
   },
   computed: {
-    // sortedPosts() {
-    //   return [...this.posts].sort((post1, post2) =>
-    //     post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])
-    //   );
-    // },
-    // sortedAndSearchedPosts() {
-    //   return this.sortedPosts.filter(post =>
-    //     post.title.toLowerCase().includes(this.searchQuery.toLowerCase())
-    //   );
-    // }
+    ...mapState({
+      posts: state => state.post.posts,
+      isPostsLoading: state => state.post.isPostsLoading,
+      selectedSort: state => state.post.selectedSort,
+      searchQuery: state => state.post.searchQuery,
+      page: state => state.post.page,
+      limit: state => state.post.limit,
+      totalPages: state => state.post.totalPages,
+      sortOptions: state => state.post.sortOptions
+    }),
+    ...mapGetters({
+      sortedPosts: "post/sortedAndSearchedPosts",
+      sortedAndSearchedPosts: "post/sortedAndSearchedPosts"
+    })
   },
-  watch: {
-    // такое же название, как и модель которая объявлена в компоненте
-    // selectedSort(newValue) {
-    //   this.posts.sort();
-    // }
-    // функция, которая отрабатывает на смену страницы
-    // page() {
-    //   this.fetchPosts();
-    // }
-  }
+  watch: {}
 };
 </script>
 

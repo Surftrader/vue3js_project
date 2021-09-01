@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export const postModule = {
     // состояние -> описывает данные, которые будут в приложении
     state: () => ({
@@ -16,7 +18,7 @@ export const postModule = {
     // кэшируемые вычисляемые значения
     getters: {
         sortedPosts(state) {
-            return [state.posts].sort((post1, post2) =>
+            return [...state.posts].sort((post1, post2) =>
                 post1[state.selectedSort] ?.localeCompare(post2[state.selectedSort])
             );
         },
@@ -87,7 +89,7 @@ export const postModule = {
                         response.headers["x-total-count"] / state.limit
                     ));
                     // добавляем посты в конец массива
-                    commit('setPosts', [...this.posts, ...response.data]);
+                    commit('setPosts', [...state.posts, ...response.data]);
                 }, 1000);
             } catch (e) {
                 alert("Ошибка");
