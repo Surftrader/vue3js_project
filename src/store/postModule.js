@@ -54,20 +54,18 @@ export const postModule = {
         async fetchPosts({ state, commit }) {
             try {
                 commit('setLoading', true);
-                setTimeout(async () => {
-                    const link = "https://jsonplaceholder.typicode.com/posts?";
-                    const response = await axios.get(link, {
-                        params: {
-                            _page: state.page,
-                            _limit: state.limit
-                        }
-                    });
-                    commit('setTotalPages', Math.ceil(
-                        response.headers["x-total-count"] / state.limit
-                    ));
-                    // перезаписываем посты
-                    commit('setPosts', response.data);
-                }, 1000);
+                const link = "https://jsonplaceholder.typicode.com/posts?";
+                const response = await axios.get(link, {
+                    params: {
+                        _page: state.page,
+                        _limit: state.limit
+                    }
+                });
+                commit('setTotalPages', Math.ceil(
+                    response.headers["x-total-count"] / state.limit
+                ));
+                // перезаписываем посты
+                commit('setPosts', response.data);
             } catch (e) {
                 alert("Ошибка");
             } finally {
@@ -77,20 +75,18 @@ export const postModule = {
         async loadMorePosts({ state, commit }) {
             try {
                 commit('setPage', state.page + 1)
-                setTimeout(async () => {
-                    const link = "https://jsonplaceholder.typicode.com/posts?";
-                    const response = await axios.get(link, {
-                        params: {
-                            _page: state.page,
-                            _limit: state.limit
-                        }
-                    });
-                    commit('setTotalPages', Math.ceil(
-                        response.headers["x-total-count"] / state.limit
-                    ));
-                    // добавляем посты в конец массива
-                    commit('setPosts', [...state.posts, ...response.data]);
-                }, 1000);
+                const link = "https://jsonplaceholder.typicode.com/posts?";
+                const response = await axios.get(link, {
+                    params: {
+                        _page: state.page,
+                        _limit: state.limit
+                    }
+                });
+                commit('setTotalPages', Math.ceil(
+                    response.headers["x-total-count"] / state.limit
+                ));
+                // добавляем посты в конец массива
+                commit('setPosts', [...state.posts, ...response.data]);
             } catch (e) {
                 alert("Ошибка");
             }
