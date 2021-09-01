@@ -1,12 +1,8 @@
 <template>
     <div>
-      <h1>{{$store.state.isAuth ? "Пользователь авторизован" : "Авторизуйтесь, чтобы использовать сервис"}}</h1>
-      <h1>{{$store.getters.doubleLikes}}</h1>
-      <div>
-        <my-button @click="$store.commit('incrementLikes')">Лайк</my-button>
-        <my-button @click="$store.commit('decrementLikes')">Дизлайк</my-button>
-      </div>
-      <h1>Страница с постами</h1>
+      <h1>{{$store.state.post.limit}}</h1>
+      {{$store.commit('page/setLoading')}}
+      <!-- <h1>Страница с постами</h1>
       <my-input
         v-model="searchQuery"
         placeholder="Поиск..."
@@ -34,7 +30,7 @@
         v-if="!isPostsLoading"      
       />
       <div v-else>Идет загрузка...</div>
-      <div v-intersection="loadMorePosts" class="observer"></div>
+      <div v-intersection="loadMorePosts" class="observer"></div> -->
       <!-- <div class="page__wrapper">
         <div
           class="page" 
@@ -93,58 +89,58 @@ export default {
     },
     showDialog() {
       this.dialogVisible = true;
-    },
-    async fetchPosts() {
-      try {
-        this.isPostsLoading = true;
-        setTimeout(async () => {
-          const link = "https://jsonplaceholder.typicode.com/posts?";
-          const response = await axios.get(link, {
-            params: {
-              _page: this.page,
-              _limit: this.limit
-            }
-          });
-          this.totalPages = Math.ceil(
-            response.headers["x-total-count"] / this.limit
-          );
-          // перезаписываем посты
-          this.posts = response.data;
-        }, 1000);
-      } catch (e) {
-        alert("Ошибка");
-      } finally {
-        this.isPostsLoading = false;
-      }
-    },
-    async loadMorePosts() {
-      try {
-        this.page += 1;
-        setTimeout(async () => {
-          const link = "https://jsonplaceholder.typicode.com/posts?";
-          const response = await axios.get(link, {
-            params: {
-              _page: this.page,
-              _limit: this.limit
-            }
-          });
-          this.totalPages = Math.ceil(
-            response.headers["x-total-count"] / this.limit
-          );
-          // добавляем посты в конец массива
-          this.posts = [...this.posts, ...response.data];
-        }, 1000);
-      } catch (e) {
-        alert("Ошибка");
-      }
     }
+    // async fetchPosts() {
+    //   try {
+    //     this.isPostsLoading = true;
+    //     setTimeout(async () => {
+    //       const link = "https://jsonplaceholder.typicode.com/posts?";
+    //       const response = await axios.get(link, {
+    //         params: {
+    //           _page: this.page,
+    //           _limit: this.limit
+    //         }
+    //       });
+    //       this.totalPages = Math.ceil(
+    //         response.headers["x-total-count"] / this.limit
+    //       );
+    //       // перезаписываем посты
+    //       this.posts = response.data;
+    //     }, 1000);
+    //   } catch (e) {
+    //     alert("Ошибка");
+    //   } finally {
+    //     this.isPostsLoading = false;
+    //   }
+    // },
+    // async loadMorePosts() {
+    //   try {
+    //     this.page += 1;
+    //     setTimeout(async () => {
+    //       const link = "https://jsonplaceholder.typicode.com/posts?";
+    //       const response = await axios.get(link, {
+    //         params: {
+    //           _page: this.page,
+    //           _limit: this.limit
+    //         }
+    //       });
+    //       this.totalPages = Math.ceil(
+    //         response.headers["x-total-count"] / this.limit
+    //       );
+    //       // добавляем посты в конец массива
+    //       this.posts = [...this.posts, ...response.data];
+    //     }, 1000);
+    //   } catch (e) {
+    //     alert("Ошибка");
+    //   }
+    // }
     // changePage(pageNumber) {
     //   this.page = pageNumber;
     //   // this.fetchPosts();
     // }
   },
   mounted() {
-    this.fetchPosts();
+    // this.fetchPosts();
     // const options = {
     //   // root: document.querySelector("#scrollArea"),
     //   rootMargin: "0px",
@@ -159,16 +155,16 @@ export default {
     // observer.observe(this.$refs.observer);
   },
   computed: {
-    sortedPosts() {
-      return [...this.posts].sort((post1, post2) =>
-        post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])
-      );
-    },
-    sortedAndSearchedPosts() {
-      return this.sortedPosts.filter(post =>
-        post.title.toLowerCase().includes(this.searchQuery.toLowerCase())
-      );
-    }
+    // sortedPosts() {
+    //   return [...this.posts].sort((post1, post2) =>
+    //     post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])
+    //   );
+    // },
+    // sortedAndSearchedPosts() {
+    //   return this.sortedPosts.filter(post =>
+    //     post.title.toLowerCase().includes(this.searchQuery.toLowerCase())
+    //   );
+    // }
   },
   watch: {
     // такое же название, как и модель которая объявлена в компоненте
