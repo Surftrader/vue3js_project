@@ -48,13 +48,17 @@ import PostForm from "@/components/PostForm";
 import PostList from "@/components/PostList";
 import MyButton from "@/components/UI/MyButton";
 import axios from "axios";
+import MySelect from "@/components/UI/MySelect";
+import MyInput from "@/components/UI/MyInput";
 
 export default {
   //   // регистрация компонентов
   components: {
     PostForm,
     PostList,
-    MyButton
+    MyButton,
+    MySelect,
+    MyInput
   },
   data() {
     return {
