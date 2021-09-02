@@ -1,49 +1,31 @@
 <template>
-    <div>
-      <h1>{{likes}}</h1>
-      <button @click="addLike">add like</button>
-      <h1>Страница с постами</h1>
-      <!-- <my-input
-        v-model="searchQuery"
-        placeholder="Поиск..."
-        v-focus
+  <div>
+    <h1>Страница с постами</h1>
+    <my-input
+      v-model="searchQuery"
+      placeholder="Поиск...."
+      v-focus
+    />
+    <div class="app__btns">
+      <my-button
+      >
+        Создать пользователя
+      </my-button>
+      <my-select
+        v-model="selectedSort"
+        :options="sortOptions"
       />
-      <div class="app__btns">
-        <my-button
-        @click="showDialog"
-        >
-        Создать пост
-        </my-button>
-        <my-select 
-          v-model="selectedSort"
-          :options="sortOptions"
-        />
-      </div>      
-      <my-dialog v-model:show="dialogVisible">
-        <post-form 
-        @create="createPost" 
-      />
-      </my-dialog>
-      <post-list
-        :posts="sortedAndSearchedPosts"
-        @remove="removePost"
-        v-if="!isPostsLoading"      
-      />
-      <div v-else>Идет загрузка...</div>
-      <div v-intersection="loadMorePosts" class="observer"></div> -->
-      <!-- <div class="page__wrapper">
-        <div
-          class="page" 
-          :class="{
-            'current-page': page === pageNumber
-          }"
-          @click="changePage(pageNumber)"
-          v-for="pageNumber in totalPages" 
-          :key="pageNumber"
-          >{{pageNumber}}
-        </div>
-      </div> -->
     </div>
+    <my-dialog v-model:show="dialogVisible">
+      <post-form
+      />
+    </my-dialog>
+    <post-list
+      :posts="sortedAndSearchedPosts"
+      v-if="!isPostsLoading"
+    />
+    <div v-else>Идет загрузка...</div>
+  </div>
 </template>
 
 <script>
@@ -54,34 +36,40 @@ import axios from "axios";
 import MySelect from "@/components/UI/MySelect";
 import MyInput from "@/components/UI/MyInput";
 import { ref } from "vue";
-
+import { usePosts } from "@/hooks/usePosts";
+import useSortedPosts from "@/hooks/useSortedPosts";
+import useSortedAndSearchedPosts from "@/hooks/useSortedAndSearchedPosts";
 export default {
-  // регистрация компонентов
   components: {
-    PostForm,
-    PostList,
-    MyButton,
+    MyInput,
     MySelect,
-    MyInput
+    MyButton,
+    PostList,
+    PostForm
   },
   data() {
     return {
       dialogVisible: false,
       sortOptions: [
         { value: "title", name: "По названию" },
-        { value: "body", name: "По содержанию" }
+        { value: "body", name: "По содержимому" }
       ]
     };
   },
   setup(props) {
-    const likes = ref(2);
-
-    const addLike = () => {
-      likes.value += 1;
-    };
+    const { posts, totalPages, isPostsLoading } = usePosts(10);
+    const { sortedPosts, selectedSort } = useSortedPosts(posts);
+    const { searchQuery, sortedAndSearchedPosts } = useSortedAndSearchedPosts(
+      sortedPosts
+    );
     return {
-      likes,
-      addLike
+      posts,
+      totalPages,
+      isPostsLoading,
+      sortedPosts,
+      selectedSort,
+      searchQuery,
+      sortedAndSearchedPosts
     };
   }
 };
